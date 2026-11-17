@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
+import { adminHeaders } from '../helpers/admin-headers';
 import { API, createTestApp } from './helpers/create-app';
 import { createBooking, sleep } from './helpers/db';
 
@@ -10,12 +11,15 @@ describe('M2 | Services + PostgreSQL (e2e)', () => {
   const url = `${API}/services`;
   const payload = { name: 'Haircut', description: 'Classic', durationMinutes: 30, price: 50000 };
 
-  const http = () => request(app.getHttpServer());
+  // M5 dan boshlab mutatsiyalar ADMIN talab qiladi; oldingi bosqichlarda header bo'sh bo'ladi.
+  let authHeaders: Record<string, string> = {};
+  const http = () => request.agent(app.getHttpServer()).set(authHeaders);
   const post = (o: Record<string, unknown> = {}) => http().post(url).send({ ...payload, ...o });
 
   beforeEach(async () => {
     app = await createTestApp();
     ds = app.get(DataSource);
+    authHeaders = await adminHeaders(app);
   });
 
   afterEach(async () => {

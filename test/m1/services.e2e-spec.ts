@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
+import { adminHeaders } from '../helpers/admin-headers';
 import { API, createTestApp } from './helpers/create-app';
 
 describe('M1 | Services CRUD (e2e)', () => {
@@ -13,12 +14,15 @@ describe('M1 | Services CRUD (e2e)', () => {
   };
   const randomUuid = '3f2b8c1e-5a4d-4e7b-9c1a-0d2e6f8a1b3c';
 
-  const http = () => request(app.getHttpServer());
+  // M5 dan boshlab mutatsiyalar ADMIN talab qiladi; oldingi bosqichlarda header bo'sh bo'ladi.
+  let authHeaders: Record<string, string> = {};
+  const http = () => request.agent(app.getHttpServer()).set(authHeaders);
   const createService = (overrides: Record<string, unknown> = {}) =>
     http().post(url).send({ ...validPayload, ...overrides });
 
   beforeEach(async () => {
     app = await createTestApp();
+    authHeaders = await adminHeaders(app);
   });
 
   afterEach(async () => {
