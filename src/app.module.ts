@@ -8,6 +8,7 @@ import { HealthModule } from './health/health.module';
 import { ServicesModule } from './services/services.module';
 import { StaffModule } from './staff/staff.module';
 import { UsersModule } from './users/users.module';
+import { RbacModule } from './rbac/rbac.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { UsersModule } from './users/users.module';
       envFilePath: '.env',
     }),
     AuthModule,
+    RbacModule,
   ],
   controllers: [],
   providers: [],
