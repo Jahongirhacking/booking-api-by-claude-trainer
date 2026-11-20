@@ -22,7 +22,13 @@ export class ServiceEntity {
   @Column({ type: 'int', unsigned: true })
   durationMinutes!: number;
 
-  @Column({ type: 'decimal' })
+  @Column({
+    type: 'decimal',
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string) => Number(value),
+    },
+  })
   price!: number;
 
   @Column({ type: 'varchar', nullable: true })

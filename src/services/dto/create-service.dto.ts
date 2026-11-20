@@ -1,5 +1,12 @@
 import { Transform } from 'class-transformer';
-import { IsNumber, IsString, Length, Max, Min } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class CreateServiceDto {
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
@@ -8,6 +15,7 @@ export class CreateServiceDto {
   name!: string;
 
   @IsString()
+  @IsOptional()
   description?: string;
 
   @IsNumber()
@@ -18,4 +26,8 @@ export class CreateServiceDto {
   @IsNumber()
   @Min(0)
   price!: number;
+
+  @IsString()
+  @IsOptional()
+  imageUrl?: string;
 }

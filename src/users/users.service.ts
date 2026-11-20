@@ -17,6 +17,11 @@ export class UsersService {
     private readonly usersRepository: Repository<UserEntity>,
   ) {}
 
+  async getUserById(id: string, withCredentials?: true): Promise<UserEntity>;
+  async getUserById(
+    id: string,
+    withCredentials?: false,
+  ): Promise<Omit<UserEntity, 'passwordHash'>>;
   async getUserById(id: string, withCredentials: boolean = false) {
     const user = await this.usersRepository.findOne({ where: { id } });
     if (!user) throw new NotFoundException();
@@ -29,12 +34,10 @@ export class UsersService {
     email: string,
     withCredentials: true,
   ): Promise<UserEntity>;
-
   async getUserByEmail(
     email: string,
     withCredentials?: false,
   ): Promise<Omit<UserEntity, 'passwordHash'>>;
-
   async getUserByEmail(email: string, withCredentials: boolean = false) {
     const user = await this.usersRepository.findOne({ where: { email } });
     if (!user) throw new NotFoundException();
@@ -93,5 +96,10 @@ export class UsersService {
         createdAt: true,
       },
     });
+  }
+
+  async removeUser(userId: string) {
+    const user = await this.getUserById(userId, true);
+    await this.usersRepository.remove(user);
   }
 }
